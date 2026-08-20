@@ -1,11 +1,11 @@
-name: Build Arch Linux Repository
+name: Build Arch Linux repo
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'haxefetch/PKGBUILD'
+      - 'source/PKGBUILD'
       - 'src/**'
       - 'bin/**' # Added trigger for pre-made binary releases
 
