@@ -1,4 +1,4 @@
-name: Build Arch Linux Repository
+name: Arch Linux Haxefetch repo container
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ jobs:
       image: archlinux:base-devel
 
     steps:
-      - name: Mark workspace safe before checkout
+      - name: Mark workspace safe
         run: |
           pacman -Sy --noconfirm git pacman-contrib
           git config --global --add safe.directory "*"
@@ -27,7 +27,7 @@ jobs:
         with:
           safe_directory: '*'
 
-      - name: Create non-root build user
+      - name: Create non-root user
         run: |
           useradd -m builder
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
@@ -51,7 +51,6 @@ jobs:
           cd x86_64
           repo-add -n -R haxefetch.db.tar.zst *.pkg.tar.zst
           
-          # Replace symlinks with real file copies for GitHub Pages compatibility
           rm -f haxefetch.db haxefetch.files
           cp haxefetch.db.tar.zst haxefetch.db
           cp haxefetch.files.tar.zst haxefetch.files
