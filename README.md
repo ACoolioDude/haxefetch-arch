@@ -6,7 +6,7 @@
 ```ini
 [haxefetch] 
 SigLevel = Optional TrustAll 
-Server = https://acooliodude.github.io/haxefetch-arch/x86_64
+Server = https://sbinator-hub.github.io/haxefetch-arch/x86_64
 ```
   2. Refresh Arch repos
 `pacman -Syu`
