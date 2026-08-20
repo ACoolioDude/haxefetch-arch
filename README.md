@@ -14,6 +14,5 @@ TrustAll Server = https://acooliodude.github.io/haxefetch-arch/x86_64
 3. Install Haxefetch
 `pacman -S haxefetch`
 
-> [!NOTE]
-> Keep in mind that once i push new changes to Haxefetch repo and turn on actions to merge, you have to wait for bit to GitHub fully syncs this in order to install this with no issue
+> **Note:** Keep in mind that once i push new changes to Haxefetch repo and turn on actions to merge, you have to wait for bit to GitHub fully syncs this in order to install this with no issue
 ---
