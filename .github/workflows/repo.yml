@@ -47,7 +47,7 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE"
           mkdir -p x86_64
-          mv source/*.pkg.tar.zst x86_64/ 2>/dev/null || true
+          cp source/*.pkg.tar.zst x86_64/
           cd x86_64
           repo-add -n -R haxefetch.db.tar.zst *.pkg.tar.zst
           
