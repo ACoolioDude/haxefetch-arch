@@ -1,6 +1,6 @@
 pkgver=1.0.0
 pkgrel=1
-pkgdesc="Fetch program written in Haxe"
+pkgdesc="Fetch program written in Haxe (yes)"
 arch=('x86_64')
 url="https://github.com/ACoolioDude/Haxefetch"
 license=('MIT')
