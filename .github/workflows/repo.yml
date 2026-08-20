@@ -1,6 +1,7 @@
 name: Build Arch Linux Repository
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
