@@ -17,12 +17,15 @@ jobs:
       image: archlinux:base-devel
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Initialize pacman and install dependencies
+      - name: Mark workspace safe before checkout
         run: |
           pacman -Sy --noconfirm git pacman-contrib
+          git config --global --add safe.directory "*"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          safe_directory: '*'
 
       - name: Create non-root build user
         run: |
@@ -31,9 +34,41 @@ jobs:
 
       - name: Generate Checksums & Build Package
         run: |
-          cd source
+          cd "$GITHUB_WORKSPACE/source"
+          chown -R builder:builder .
           
-          # Fix directory permissions for builder
+          # Run updpkgsums as builder user
+          su builder -c "updpkgsums"
+          
+          # Build package as builder user
+          su builder -c "makepkg -sc --noconfirm"
+
+      - name: Update repository database
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          mkdir -p x86_64
+          mv source/*.pkg.tar.zst x86_64/ 2>/dev/null || true
+          cd x86_64
+          repo-add -n -R haxefetch.db.tar.zst *.pkg.tar.zst
+          
+          # Replace symlinks with real file copies for GitHub Pages compatibility
+          rm -f haxefetch.db haxefetch.files
+          cp haxefetch.db.tar.zst haxefetch.db
+          cp haxefetch.files.tar.zst haxefetch.files
+
+      - name: Commit and push updated repo and PKGBUILD
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add x86_64/ source/PKGBUILD
+          git status
+          git diff-index --quiet HEAD || git commit -m "Auto-update checksums & build repo [skip ci]"
+          
+          # Use GITHUB_TOKEN directly in the remote URL to bypass git container auth issues
+          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
           chown -R builder:builder .
           
           # Run updpkgsums as builder user to update sha256sums safely
