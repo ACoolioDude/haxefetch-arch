@@ -1,3 +1,4 @@
+pkgname=haxefetch
 pkgver=1.0.0
 pkgrel=1
 pkgdesc="Fetch program written in Haxe (yes)"
