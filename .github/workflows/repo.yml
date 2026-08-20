@@ -57,11 +57,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          cd "$GITHUB_WORKSPACE"
+          
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Stage repo binaries and updated PKGBUILD
           git add x86_64/ source/PKGBUILD
           git status
           git diff-index --quiet HEAD || git commit -m "Auto-update checksums & build repo [skip ci]"
           git push
+  
