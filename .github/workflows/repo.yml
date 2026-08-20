@@ -90,14 +90,15 @@ jobs:
           cp haxefetch.files.tar.zst haxefetch.files
 
       - name: Commit and push updated repo and PKGBUILD
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          cd "$GITHUB_WORKSPACE"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Clean up temporary build files inside source/ before committing
+          git clean -fx source/
           
           git add x86_64/ source/PKGBUILD
           git status
           git diff-index --quiet HEAD || git commit -m "Auto-update checksums & build repo [skip ci]"
-          git push
-  
+          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
