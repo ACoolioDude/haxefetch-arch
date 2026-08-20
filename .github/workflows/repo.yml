@@ -1,0 +1,65 @@
+name: Build Arch Linux Repository
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'haxefetch/PKGBUILD'
+      - 'src/**'
+      - 'bin/**' # Added trigger for pre-made binary releases
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize pacman and install dependencies
+        run: |
+          pacman -Sy --noconfirm git pacman-contrib
+
+      - name: Create non-root build user
+        run: |
+          useradd -m builder
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+          chown -R builder:builder .
+
+      - name: Generate Checksums & Build Package
+        run: |
+          cd source
+          
+          # Automatically update sha256sums array inside PKGBUILD
+          updpkgsums
+          
+          chown -R builder:builder .
+          su builder -c "makepkg -sc --noconfirm"
+
+      - name: Update repository database
+        run: |
+          mkdir -p x86_64
+          mv source/*.pkg.tar.zst x86_64/ 2>/dev/null || true
+          cd x86_64
+          repo-add -n -R haxefetch.db.tar.zst *.pkg.tar.zst
+          
+          # Replace symlinks with real file copies for GitHub Pages
+          rm -f haxefetch.db haxefetch.files
+          cp haxefetch.db.tar.zst haxefetch.db
+          cp haxefetch.files.tar.zst haxefetch.files
+
+      - name: Commit and push updated repo and PKGBUILD
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Stage both the binary repository and the updated PKGBUILD checksums
+          git add x86_64/ haxefetch/PKGBUILD
+          git status
+          git diff-index --quiet HEAD || git commit -m "Auto-update checksums & build repo [skip ci]"
+          git push
