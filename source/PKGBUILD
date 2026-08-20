@@ -7,7 +7,7 @@ url="https://github.com/ACoolioDude/Haxefetch"
 license=('MIT')
 
 source=("haxefetch::https://github.com/ACoolioDude/Haxefetch/raw/refs/heads/main/binary/haxefetch")
-sha256sums=('a95c6e128627ba9418741088b8568e365e5bfa99aa037b385623942a331befb0')
+sha256sums=('8fa7dfe64817b1e25c5d0b77047d39f1fba8318b7c02ca3891245475f387ae66')
 
 options=('!debug')
 
