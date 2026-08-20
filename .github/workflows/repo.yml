@@ -1,4 +1,4 @@
-name: Build Arch Linux repo
+name: Build Arch Linux Repository
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     paths:
       - 'source/PKGBUILD'
       - 'src/**'
-      - 'bin/**' # Added trigger for pre-made binary releases
+      - 'bin/**'
 
 jobs:
   build:
@@ -27,16 +27,18 @@ jobs:
         run: |
           useradd -m builder
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-          chown -R builder:builder .
 
       - name: Generate Checksums & Build Package
         run: |
           cd source
           
-          # Automatically update sha256sums array inside PKGBUILD
+          # Fix directory permissions for builder
+          chown -R builder:builder .
+          
+          # Run updpkgsums as builder user to update sha256sums safely
           su builder -c "updpkgsums"
           
-          chown -R builder:builder .
+          # Build the package as builder user
           su builder -c "makepkg -sc --noconfirm"
 
       - name: Update repository database
@@ -46,7 +48,7 @@ jobs:
           cd x86_64
           repo-add -n -R haxefetch.db.tar.zst *.pkg.tar.zst
           
-          # Replace symlinks with real file copies for GitHub Pages
+          # Replace symlinks with real file copies for GitHub Pages compatibility
           rm -f haxefetch.db haxefetch.files
           cp haxefetch.db.tar.zst haxefetch.db
           cp haxefetch.files.tar.zst haxefetch.files
@@ -58,8 +60,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Stage both the binary repository and the updated PKGBUILD checksums
-          git add x86_64/ haxefetch/PKGBUILD
+          # Stage repo binaries and updated PKGBUILD
+          git add x86_64/ source/PKGBUILD
           git status
           git diff-index --quiet HEAD || git commit -m "Auto-update checksums & build repo [skip ci]"
           git push
