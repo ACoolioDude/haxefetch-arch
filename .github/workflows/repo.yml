@@ -58,10 +58,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd "$GITHUB_WORKSPACE"
-          
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
