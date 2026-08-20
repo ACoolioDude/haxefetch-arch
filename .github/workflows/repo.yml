@@ -10,11 +10,20 @@ on:
       - 'src/**'
       - 'bin/**'
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
       image: archlinux:base-devel
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
 
     steps:
       - name: Mark workspace safe
