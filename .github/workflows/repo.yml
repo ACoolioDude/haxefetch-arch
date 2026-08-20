@@ -95,8 +95,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Clean up temporary build files inside source/ before committing
-          git clean -fx source/
+          # Safely clean temporary makepkg folders without touching PKGBUILD
+          rm -rf source/pkg source/src source/*.pkg.tar.zst
           
           git add x86_64/ source/PKGBUILD
           git status
