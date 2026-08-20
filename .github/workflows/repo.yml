@@ -95,9 +95,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Safely clean temporary makepkg folders without touching PKGBUILD
-          rm -rf source/pkg source/src source/*.pkg.tar.zst
-          
           git add x86_64/ source/PKGBUILD
           git status
           git diff-index --quiet HEAD || git commit -m "Auto-update checksums & build repo [skip ci]"
