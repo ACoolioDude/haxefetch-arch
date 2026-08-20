@@ -34,7 +34,7 @@ jobs:
           cd source
           
           # Automatically update sha256sums array inside PKGBUILD
-          updpkgsums
+          su builder -c "updpkgsums"
           
           chown -R builder:builder .
           su builder -c "makepkg -sc --noconfirm"
