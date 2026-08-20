@@ -59,39 +59,6 @@ jobs:
       - name: Commit and push updated repo and PKGBUILD
         run: |
           cd "$GITHUB_WORKSPACE"
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          git add x86_64/ source/PKGBUILD
-          git status
-          git diff-index --quiet HEAD || git commit -m "Auto-update checksums & build repo [skip ci]"
-          
-          # Use GITHUB_TOKEN directly in the remote URL to bypass git container auth issues
-          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
-          chown -R builder:builder .
-          
-          # Run updpkgsums as builder user to update sha256sums safely
-          su builder -c "updpkgsums"
-          
-          # Build the package as builder user
-          su builder -c "makepkg -sc --noconfirm"
-
-      - name: Update repository database
-        run: |
-          mkdir -p x86_64
-          mv source/*.pkg.tar.zst x86_64/ 2>/dev/null || true
-          cd x86_64
-          repo-add -n -R haxefetch.db.tar.zst *.pkg.tar.zst
-          
-          # Replace symlinks with real file copies for GitHub Pages compatibility
-          rm -f haxefetch.db haxefetch.files
-          cp haxefetch.db.tar.zst haxefetch.db
-          cp haxefetch.files.tar.zst haxefetch.files
-
-      - name: Commit and push updated repo and PKGBUILD
-        run: |
-          cd "$GITHUB_WORKSPACE"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
