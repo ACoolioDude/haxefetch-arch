@@ -7,7 +7,7 @@ url="https://github.com/Sbinator-hub/Haxefetch"
 license=('MIT')
 
 source=("haxefetch::https://github.com/Sbinator-hub/Haxefetch/raw/refs/heads/main/binary/haxefetch")
-sha256sums=('6bd18a1231a68a1f5b9fd06f00b7cb984d4379d499ebe0b5a2c3e82a8d3d0b10')
+sha256sums=('9d9cef87d49b265a5ac5df10974eed8ac28ec541ebffe98c966112b18c865752')
 
 options=('!debug')
 
